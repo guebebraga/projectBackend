@@ -1,4 +1,6 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { TOKEN_SECRET } = require("../middleware/jwt-validate");
 
 const registro = async (req, res, next) => {
   try {
@@ -16,12 +18,11 @@ const registro = async (req, res, next) => {
       });
 
       if (existeUser) {
-        res.status(400).json({ success: false, message: "Mail repetido" });
+        res.status(400).json({ success: false, message: "El usuario ya existe" });
         return;
       }
 
       const salt = await bcrypt.genSalt(10);
-      console.log("Salt", salt);
       const password = await bcrypt.hash(req.body.password, salt);
 
       const newUser = {
@@ -36,13 +37,52 @@ const registro = async (req, res, next) => {
     } else {
       return res.status(400).json({
         success: false,
-        message: "Faltan datos (requeridos: mail, name, password)",
+        message: "Debe completar todos los campos",
       });
     }
   } catch (error) {
     return next(error);
   }
 };
+
+const login = async (req, res, next) => {
+  try {
+    const user = usuarios.find((u) => u.mail === req.body.mail);
+    if (!user) {
+      return res.status(400).json({ error: "Usuario no encontrado", message:"No se encontro usuario"});
+    }
+
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!validPassword) {
+      return res.status(400).json({ error: "Contraseña no válida" , message: "Contraseña no valida"});
+    }
+
+    // Token
+    const token = jwt.sign(
+      {
+        name: user.name,
+        mail: user.mail,
+      },
+      TOKEN_SECRET
+    );
+
+    jwt.login
+
+    res.status(200).json({
+      error: null,
+      data: "Login exitoso",
+      message:"Login exitoso",
+      token
+      
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 
 const getUsers = async (req, res, next) => {
   try {
@@ -55,12 +95,13 @@ const getUsers = async (req, res, next) => {
 module.exports = {
   registro,
   getUsers,
+  login
 };
 
 const usuarios = [
   {
     name: "Guebe",
-    mail: "guebe@curso.com",
+    mail: "guebe@gmail.com",
     password: "mipaz",
   },
 ];

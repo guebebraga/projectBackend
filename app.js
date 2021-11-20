@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const registro = require("./src/routes/miCuenta");
+const login = require("./src/routes/miCuenta");
 
 const app = express();
 const PORT = 4000;
@@ -20,6 +21,8 @@ app.get("/",(req,res)=>{
 });
 
 app.use("/miCuenta", registro);
+app.use("/miCuenta", login);
+
 
 
 app.listen(PORT,function(){
