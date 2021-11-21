@@ -24,6 +24,7 @@ const registro = async (req, res, next) => {
 
       const salt = await bcrypt.genSalt(10);
       const password = await bcrypt.hash(req.body.password, salt);
+      console.log(salt);
 
       const newUser = {
         name: req.body.name,
@@ -69,8 +70,6 @@ const login = async (req, res, next) => {
       TOKEN_SECRET
     );
 
-    jwt.login
-
     res.status(200).json({
       error: null,
       data: "Login exitoso",
@@ -83,26 +82,17 @@ const login = async (req, res, next) => {
   }
 };
 
-
-const getUsers = async (req, res, next) => {
-  try {
-    return res.json({ error: null, usuarios });
-  } catch (error) {
-    return next(error);
-  }
-};
-
 module.exports = {
   registro,
-  getUsers,
   login
 };
 
 const usuarios = [
   {
-    name: "Guebe",
-    mail: "guebe@gmail.com",
-    password: "mipaz",
+    name: "gabriel",
+    mail: "gabriel@gmail.com",
+    password: "$2b$10$gFY68tNxQ01iUKwXVJkbe."
+
   },
 ];
 

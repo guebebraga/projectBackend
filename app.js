@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const registro = require("./src/routes/miCuenta");
 const login = require("./src/routes/miCuenta");
+const {getProductos }  = require("./src/routes/productos");
 
 const app = express();
 const PORT = 4000;
@@ -20,6 +21,7 @@ app.get("/",(req,res)=>{
       res.send("ENDPOINT DE PRUEBA")
 });
 
+app.use("/productos", getProductos);
 app.use("/miCuenta", registro);
 app.use("/miCuenta", login);
 

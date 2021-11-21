@@ -1,6 +1,6 @@
 const express = require("express");
 
-const {registro , login, getUsers}= require("../controllers/miCuenta");
+const {registro , login}= require("../controllers/miCuenta");
 
 const router = express.Router();
 
