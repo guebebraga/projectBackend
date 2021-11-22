@@ -18,7 +18,7 @@ const registro = async (req, res, next) => {
       });
 
       if (existeUser) {
-        res.status(400).json({ success: false, message: "El usuario ya existe" });
+        res.status(400).json({ success: false, message: "El mail ya existe" });
         return;
       }
 
