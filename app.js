@@ -4,6 +4,15 @@ const cors = require("cors");
 const registro = require("./src/routes/miCuenta");
 const login = require("./src/routes/miCuenta");
 const {getProductos }  = require("./src/routes/productos");
+//
+if (process.env.ENV !== "production") {
+    require("dotenv").config();
+  }
+  const { resolve } = require("path");
+  const { config } = require("dotenv");
+  config({ path: resolve(__dirname, "./.env") });
+  
+//
 
 const app = express();
 const PORT = 4000;

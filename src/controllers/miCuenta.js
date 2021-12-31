@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../middleware/jwt-validate");
-
+const db = require("../db");
+ 
 const registro = async (req, res, next) => {
   try {
     if (req.body.mail && req.body.name && req.body.password) {
@@ -13,9 +14,17 @@ const registro = async (req, res, next) => {
         return;
       }
 
-      const existeUser = usuarios.find((u) => {
+      /*const existeUser = usuarios.find((u) => {
         return u.mail === req.body.mail;
-      });
+      });*/
+
+      //Consulata a la base de datos 
+      const usuarioBd = await db.query("Select * from users where mail = $1", [
+        req.body.mail,
+      ]);
+
+      // Fijarme que no exista
+      const existeUser = usuarioBd.rowCount > 0;
 
       if (existeUser) {
         res.status(400).json({ success: false, message: "El mail ya existe" });
@@ -31,8 +40,14 @@ const registro = async (req, res, next) => {
         mail: req.body.mail,
         password: password,
       };
+      //usuarios.push(newUser);
 
-      usuarios.push(newUser);
+      const resBd = await db.query(
+        "Insert into users(name, mail, password) values ($1, $2, $3)",
+        [newUser.name, newUser.mail, newUser.password]
+      );
+
+
 
       return res.status(200).json({ success: true, message:"Se creo el usuario correctamente", newUser });
     } else {
@@ -48,9 +63,22 @@ const registro = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const user = usuarios.find((u) => u.mail === req.body.mail);
+    /*const user = usuarios.find((u) => u.mail === req.body.mail);
     if (!user) {
       return res.status(400).json({ error: "Usuario no encontrado", message:"No se encontro usuario"});
+    }*/
+
+    const resBd = await db.query("Select * from users where mail = $1", [
+      req.body.mail,
+    ]);
+  
+    let user = null;
+    if (resBd.rows.length === 1) {
+      user = resBd.rows[0];
+    }
+  
+    if (!user) {
+      return res.status(400).json({ error: "Usuario no encontrado" });
     }
 
     const validPassword = await bcrypt.compare(
@@ -87,13 +115,13 @@ module.exports = {
   login
 };
 
-const usuarios = [
+/*const usuarios = [
   {
     name: "gabriel",
     mail: "gabriel@gmail.com",
     password: "$2b$10$gFY68tNxQ01iUKwXVJkbe."
 
   },
-];
+];*/
 
   

@@ -1,4 +1,5 @@
-const productos = [
+const db = require("../db");
+/*const productos = [
     {
         nombre: 'Raton',
         link: 'https://i.pinimg.com/236x/da/04/18/da04188f52cf14e3ab3f159d583e0d21.jpg',
@@ -162,10 +163,12 @@ const productos = [
         clase:'gato',
     },    
 ];
+*/
 
 const getProductos = async (req, res, next) => {
     try {
-      return res.json({ messange: 'Lista de Productos', productos });
+    const consulta = await db.query("Select * from  productos", []);
+      return res.json({ messange: 'Lista de Productos', consulta: consulta.rows });
     } catch (error) {
       return next(error);
     }
