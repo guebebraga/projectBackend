@@ -10,7 +10,9 @@ const registro = async (req, res, next) => {
       if (/^\S+@\S+\.\S+$/.test(req.body.mail) === false) {
         res
           .status(400)
-          .json({ success: false, message: "Formato de mail incorrecto" });
+          .json({ success: false, 
+                  message: "Formato de mail incorrecto",
+                  error: "Formato mail incorrecto" });
         return;
       }
 
@@ -19,15 +21,15 @@ const registro = async (req, res, next) => {
       });*/
 
       //Consulata a la base de datos 
-      const usuarioBd = await db.query("Select * from users where mail = $1", [
-        req.body.mail,
-      ]);
+      const usuarioBd = await db.query("Select * from usuarios where mail = $1", [ req.body.mail,]);
 
       // Fijarme que no exista
       const existeUser = usuarioBd.rowCount > 0;
 
       if (existeUser) {
-        res.status(400).json({ success: false, message: "El mail ya existe" });
+        res.status(400).json({ success: false, 
+                               message: "El mail ya existe",
+                               error: "Mail ya existe" });
         return;
       }
 
@@ -43,17 +45,16 @@ const registro = async (req, res, next) => {
       //usuarios.push(newUser);
 
       const resBd = await db.query(
-        "Insert into users(name, mail, password) values ($1, $2, $3)",
+        "Insert into usuarios(nombre, mail, pass) values ($1, $2, $3)",
         [newUser.name, newUser.mail, newUser.password]
       );
-
-
 
       return res.status(200).json({ success: true, message:"Se creo el usuario correctamente", newUser });
     } else {
       return res.status(400).json({
         success: false,
         message: "Debe completar todos los campos",
+        error: "Debe completar todos los campo"
       });
     }
   } catch (error) {
@@ -68,31 +69,32 @@ const login = async (req, res, next) => {
       return res.status(400).json({ error: "Usuario no encontrado", message:"No se encontro usuario"});
     }*/
 
-    const resBd = await db.query("Select * from users where mail = $1", [
-      req.body.mail,
-    ]);
-  
+    const resBd = await db.query("Select * from usuarios where mail = $1", [req.body.mail,]);
+
     let user = null;
     if (resBd.rows.length === 1) {
       user = resBd.rows[0];
     }
   
     if (!user) {
-      return res.status(400).json({ error: "Usuario no encontrado" });
+      return res.status(400).json({  success: false,
+                                     error: "Usuario no encontrado",});
     }
 
     const validPassword = await bcrypt.compare(
       req.body.password,
-      user.password
+      user.pass//.pass
     );
     if (!validPassword) {
-      return res.status(400).json({ error: "Contraseña no válida" , message: "Contraseña no valida"});
+      return res.status(400).json({ success: false,
+                                    error: "Contraseña no válida" , 
+                                    message: "Contraseña no valida"});
     }
 
     // Token
     const token = jwt.sign(
       {
-        name: user.name,
+        name: user.nombre,
         mail: user.mail,
       },
       TOKEN_SECRET

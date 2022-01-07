@@ -4,6 +4,7 @@ const cors = require("cors");
 const registro = require("./src/routes/miCuenta");
 const login = require("./src/routes/miCuenta");
 const {getProductos }  = require("./src/routes/productos");
+const {getUsers }  = require("./src/routes/users");
 //
 if (process.env.ENV !== "production") {
     require("dotenv").config();
@@ -33,8 +34,7 @@ app.get("/",(req,res)=>{
 app.use("/productos", getProductos);
 app.use("/miCuenta", registro);
 app.use("/miCuenta", login);
-
-
+app.use("/users", getUsers);
 
 app.listen(PORT,function(){
     console.log("Running in http//localhost:4000");
