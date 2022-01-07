@@ -75,7 +75,6 @@ const login = async (req, res, next) => {
     if (resBd.rows.length === 1) {
       user = resBd.rows[0];
     }
-  
     if (!user) {
       return res.status(400).json({  success: false,
                                      error: "Usuario no encontrado",});
@@ -83,7 +82,7 @@ const login = async (req, res, next) => {
 
     const validPassword = await bcrypt.compare(
       req.body.password,
-      user.pass//.pass
+      user.pass//llego
     );
     if (!validPassword) {
       return res.status(400).json({ success: false,
