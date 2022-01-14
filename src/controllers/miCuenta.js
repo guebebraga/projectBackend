@@ -116,13 +116,5 @@ module.exports = {
   login
 };
 
-/*const usuarios = [
-  {
-    name: "gabriel",
-    mail: "gabriel@gmail.com",
-    password: "$2b$10$gFY68tNxQ01iUKwXVJkbe."
-
-  },
-];*/
 
   
