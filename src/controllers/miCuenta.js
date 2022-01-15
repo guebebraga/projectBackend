@@ -16,11 +16,7 @@ const registro = async (req, res, next) => {
         return;
       }
 
-      /*const existeUser = usuarios.find((u) => {
-        return u.mail === req.body.mail;
-      });*/
-
-      //Consulata a la base de datos 
+      //Consulta a la base de datos 
       const usuarioBd = await db.query("Select * from usuarios where mail = $1", [ req.body.mail,]);
 
       // Fijarme que no exista
@@ -42,7 +38,6 @@ const registro = async (req, res, next) => {
         mail: req.body.mail,
         password: password,
       };
-      //usuarios.push(newUser);
 
       const resBd = await db.query(
         "Insert into usuarios(nombre, mail, pass) values ($1, $2, $3)",
@@ -64,10 +59,6 @@ const registro = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    /*const user = usuarios.find((u) => u.mail === req.body.mail);
-    if (!user) {
-      return res.status(400).json({ error: "Usuario no encontrado", message:"No se encontro usuario"});
-    }*/
 
     const resBd = await db.query("Select * from usuarios where mail = $1", [req.body.mail,]);
 
